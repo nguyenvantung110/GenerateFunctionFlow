@@ -57,6 +57,7 @@ templates.value = [
             description : 'this is desc',
             level : 2,
 			parentId : '1',
+            nodeIndex : 1,
             childs : [
                 {
                 id : '1-1-1',
@@ -64,6 +65,7 @@ templates.value = [
                 description : 'this is desc',
                 level : 3,
 				parentId : '1-1',
+                nodeIndex : 1,
                 childs : []
                 }   
             ]
@@ -74,6 +76,7 @@ templates.value = [
             description : 'this is desc',
             level : 2,
 			parentId : '1',
+            nodeIndex : 2,
             childs : []
         }
       ]
@@ -107,13 +110,76 @@ templates.value = [
     }
   ]
 
-function AddItem(){
+function AddItem(button){
+  const buttonEl = button.parentElement;
+  const prevEl = buttonEl.previousElementSibling
+  const nextEl = buttonEl.nextElementSibling
 
+  // Lấy dữ liệu từ phần tử liền kề
+  const item = prevEl?.querySelectorAll('span')
+  const prevData = {
+      id: item[0].textContent,
+      name: item[1].textContent
+    }
+//name: nextEl?.querySelector('button').textContent.split('\n')[0],
+const item2 = nextEl?.querySelectorAll('span')
+    const nextData = {
+      id: item2[0].textContent,
+      name: item2[1].textContent    }
+
+const newNode = {
+      id : '5',
+      name : 'this is fouth node',
+      description : 'this is desc',
+      level : 1,
+	  parentId : '0',
+      nodeIndex : 5,
+      childs : []
+}
+
+// Thêm object mới sau object có id 2
+insertObjectA(templates.value, newNode, prevData.id, 'after');
+AddNode()
 }
 
 
+function insertObjectA(targetArray, newObject, targetId, position) {
+  const findAndInsert = (arr, id, obj, pos) => {
+    console.log('arr',arr)
+    console.log('id',id)
+    console.log('obj',obj)
+    console.log('pos',pos)
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].id === id) {
+        switch (pos) {
+          case 'before':
+            arr.splice(i, 0, obj);
+            break;
+          case 'after':
+            arr.splice(i + 1, 0, obj);
+            console.log(arr.splice(i + 1, 0, obj))
+            break;
+          case 'between':
+            if (arr[i].child && arr[i].child.length > 0) {
+              return findAndInsert(arr[i].child, targetId, obj, pos);
+            }
+            break;
+          default:
+            return;
+        }
+        return;
+      }
+      if (arr[i].child && arr[i].child.length > 0) {
+        if (findAndInsert(arr[i].child, id, obj, pos)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
 
-
+  return findAndInsert(targetArray, targetId, newObject, position);
+}
 
 defineProps({
     listNodes: {
@@ -125,38 +191,40 @@ defineProps({
 onMounted(AddNode)
 
 function AddNode() {
+    let index = 0
     const buttons = document.querySelectorAll('.node');
     for (const button of buttons) {
+        index ++
         if (!button.classList.contains('node-1')) {
-            button.parentNode.insertBefore(CreateConnectLine(), button);
+            button.parentNode.insertBefore(CreateConnectLine(index), button);
         }
     }
 
     const nodeWraps = document.querySelectorAll('.node-wrap');
+
     for (const nodeWrap of nodeWraps) {
+        index ++
         if (!nodeWrap.classList.contains('node-wrap-1')) {
-            nodeWrap.parentNode.insertBefore(CreateConnectLine(), nodeWrap);
+            nodeWrap.parentNode.insertBefore(CreateConnectLine(index), nodeWrap);
         }
     }
 }
 
-function CreateConnectLine() {
+function CreateConnectLine(index) {
     const addButton = document.createElement('button');
     addButton.textContent = '+';
     addButton.classList.add('add-button');
+    let classIndex = 'add-button-' + index
+    addButton.classList.add(classIndex);
+    addButton.setAttribute('id',classIndex);
+    addButton.addEventListener('click', () => {
+        AddItem(addButton)
+    });
 
     const div = document.createElement('div');
     div.appendChild(addButton);
     div.classList.add('connect-div');
     return div;
-}
-
-const isActive = ref(false)
-function CreateButton(){
-    h('button', {
-    class: { 'my-class': isActive.value },
-    onClick: CreateButton
-  }, "vvv")
 }
 
 </script>

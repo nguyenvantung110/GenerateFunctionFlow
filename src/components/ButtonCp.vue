@@ -1,8 +1,10 @@
 <template>
     <button :class="'node node-' + nodeIndex">
-        {{ id }} <br> {{name }}
+        <span>{{ id }}</span>
+         <br>
+         <span>{{ name }}</span>
     </button>
-    <div v-if="childs?.length" :class="'node-wrap node-wrap-' + level+1">
+    <div v-if="childs?.length" :class="'node-wrap node-wrap-' + (level+1)">
         <ButtonCp v-for="child in childs" :key="child?.id" v-bind="child" type="child" />
     </div>
 </template>
