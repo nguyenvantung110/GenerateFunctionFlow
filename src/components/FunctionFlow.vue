@@ -1,8 +1,7 @@
 /* eslint-disable */
 <template>
-    This is data : {{listNodes?.id}}
 <div class="flow">
-    <div class="node-wrap first-node-wrap">
+    <!-- <div class="node-wrap first-node-wrap">
         <button class="node first-node">This is first node <br>fsdfs</button>
         <button class="node second-node">This is first node <br>fsdfs</button>
 
@@ -25,19 +24,100 @@
         <button class="node second-node">This is first node <br>fsdfs</button>
 
         <button class="node second-node">This is first node <br>fsdfs</button>
+    </div> -->
+    <div class="node-wrap node-wrap-1">
+        <ButtonCp v-for="item in templates" :key="item?.id" v-bind="item"/>
     </div>
+    <button :class="'tungnv' + cl">VV</button>
 </div>
 </template>
 
 <script setup>
 import {
-    onMounted,
-    ref
+    onMounted,h,
+    ref,
+    onBeforeUpdate
 } from 'vue';
+
+import ButtonCp from './ButtonCp.vue';
+const cl = ref(1)
+const templates = ref([])
+templates.value = [
+    {
+      id : '1',
+      name : 'this is root node',
+      description : 'this is desc',
+      level : 1,
+      nodeIndex : 1,
+	  parentId : '0',
+      childs : [
+        {
+            id : '1-1',
+            name : 'this is second node',
+            description : 'this is desc',
+            level : 2,
+			parentId : '1',
+            childs : [
+                {
+                id : '1-1-1',
+                name : 'this is second node',
+                description : 'this is desc',
+                level : 3,
+				parentId : '1-1',
+                childs : []
+                }   
+            ]
+        },
+        {
+            id : '1-2',
+            name : 'this is third node',
+            description : 'this is desc',
+            level : 2,
+			parentId : '1',
+            childs : []
+        }
+      ]
+    },
+    {
+      id : '2',
+      name : 'this is second node',
+      description : 'this is desc',
+      level : 1,
+	  parentId : '0',
+      nodeIndex : 2,
+      childs : []
+    },
+    {
+      id : '3',
+      name : 'this is third node',
+      description : 'this is desc',
+      level : 1,
+	  parentId : '0',
+      nodeIndex : 3,
+      childs : []
+    },
+    {
+      id : '4',
+      name : 'this is fouth node',
+      description : 'this is desc',
+      level : 1,
+	  parentId : '0',
+      nodeIndex : 4,
+      childs : []
+    }
+  ]
+
+function AddItem(){
+
+}
+
+
+
+
 
 defineProps({
     listNodes: {
-    type: String,
+    type: Object,
     required: true
   }
 });
@@ -47,14 +127,14 @@ onMounted(AddNode)
 function AddNode() {
     const buttons = document.querySelectorAll('.node');
     for (const button of buttons) {
-        if (!button.classList.contains('first-node')) {
+        if (!button.classList.contains('node-1')) {
             button.parentNode.insertBefore(CreateConnectLine(), button);
         }
     }
 
     const nodeWraps = document.querySelectorAll('.node-wrap');
     for (const nodeWrap of nodeWraps) {
-        if (!nodeWrap.classList.contains('first-node-wrap')) {
+        if (!nodeWrap.classList.contains('node-wrap-1')) {
             nodeWrap.parentNode.insertBefore(CreateConnectLine(), nodeWrap);
         }
     }
@@ -70,16 +150,29 @@ function CreateConnectLine() {
     div.classList.add('connect-div');
     return div;
 }
+
+const isActive = ref(false)
+function CreateButton(){
+    h('button', {
+    class: { 'my-class': isActive.value },
+    onClick: CreateButton
+  }, "vvv")
+}
+
 </script>
 
 <style lang="css">
+*{
+    box-sizing: border-box;
+}
+
 button {
     cursor: pointer;
 }
 
 .flow {
     width: 500px;
-    height: 500px;
+    /* height: 500px; */
     overflow-y: auto;
     background: rgb(226, 226, 226);
     padding: 1rem;
@@ -91,7 +184,7 @@ button {
     position: relative;
 }
 
-.node-wrap:not(.first-node-wrap)::before {
+.node-wrap:not(.node-wrap-1)::before {
     content: '';
     display: block;
     height: 50px;
@@ -102,7 +195,7 @@ button {
     border-right: 2px solid #aaa;
 }
 
-.node-wrap:not(.first-node-wrap)::after {
+.node-wrap:not(.node-wrap-1)::after {
     content: '';
     height: 100%;
     border: 1px solid #aaa;

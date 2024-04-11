@@ -2,15 +2,15 @@
   <div class="about">
     <h1>This is an about page</h1>
     <div class="template-list">
-      <div class="template" v-for="temp in templates" @click="SelectTemplate">
+      <div class="template" v-for="temp in templates" @click="SelectTemplate(temp)">
         <p>{{ temp?.id }}</p>
         <p>{{ temp?.name }}</p>
         <p>{{ temp?.description }}</p>
         <p>{{ temp?.level }}</p>
       </div>
     </div>
+    <FunctionFlow :listNodes = "nodes"/>
     <div class="flow-func" v-if="isSelected">
-      <FunctionFlow :listNodes = "nodes"/>
     </div>
   </div>
 </template>
@@ -27,34 +27,35 @@
       name : 'this is root node',
       description : 'this is desc',
       level : 1,
-      child : Object
+      childs : Object
     },
     {
       id : '2',
       name : 'this is second node',
       description : 'this is desc',
       level : 1,
-      child : Object
+      childs : Object
     },
     {
       id : '3',
       name : 'this is third node',
       description : 'this is desc',
       level : 1,
-      child : Object
+      childs : Object
     },
     {
       id : '4',
       name : 'this is fouth node',
       description : 'this is desc',
       level : 1,
-      child : Object
+      childs : Object
     }
   ]
 
 
-  function SelectTemplate(){
-    console.log('tungnv')
+  function SelectTemplate(selected){
+    nodes.value = selected
+    isSelected.value = true
   }
 </script>
 <style>
