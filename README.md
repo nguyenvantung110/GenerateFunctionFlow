@@ -1,2 +1,2 @@
 # VueJsRepo
-repository to lern vuejs 3
+create functionality similar to JiraAutomation
