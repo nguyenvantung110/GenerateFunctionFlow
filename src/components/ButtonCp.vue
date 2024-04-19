@@ -1,46 +1,72 @@
 <template>
-    <button :class="'node node-' + nodeIndex">
-        <span>{{ id }}</span>
-         <br>
-         <span>{{ name }}</span>
-    </button>
-    <div v-if="childs?.length" :class="'node-wrap node-wrap-' + (level+1)">
-        <ButtonCp v-for="child in childs" :key="child?.id" v-bind="child" type="child" />
+    <div class="data-list">
+        <div v-if="index > 0" class="connect-line">
+            <button class="add-btn">+</button>
+        </div>
+        <button class="step-button">
+            <button v-if="!isTemplate" class="delete-btn">x</button>
+            <span>{{ name }}</span>
+        </button>
+        <div v-if="children?.length" class="sub-item">
+            <ButtonCp v-for="(child,subIndex) in children" :key="subIndex" v-bind="child" type="child" :index="subIndex" />
+        </div>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+
 const child = defineProps({
     id: {
-        type: String,
+        type: Number,
         required: true
     },
     name: {
         type: String,
         required: true
     },
-    description: {
+    category: {
         type: String,
         required: true
     },
-    level: {
-        type: Number,
+    isTemplate: {
+        type: Boolean,
         required: true
     },
-    nodeIndex: {
-        type: Number,
-        required: true
-    },
-    parentId: {
-        type: String,
-        required: true
-    },
-    childs: {
+    details: {
         type: Array,
         required: true
+    },
+    children: {
+        type: Array,
+        require : false
+    },
+    index :{
+        type:Number,
+        require:false
     }
 })
 </script>
 
 <style scoped>
+    .step-button{
+        border: 1px solid #aaa;
+        border-radius: 5px;
+        padding: 1rem;
+        width: 100%;
+    }
+
+    .sub-item {
+        padding-left: 4rem;
+        position: relative;
+    }
+
+    .sub-item::before {
+        content: '';
+        height: 100%;
+        width: 1px;
+        background: #aaa;
+        position: absolute;
+        top:0;
+        left: 2rem;
+    }
 </style>

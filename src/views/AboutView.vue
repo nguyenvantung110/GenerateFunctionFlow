@@ -9,13 +9,15 @@
         <p>{{ temp?.level }}</p>
       </div>
     </div>
-    <FunctionFlow :listNodes = "nodes"/>
-    <div class="flow-func" v-if="isSelected">
+    <!-- <FunctionFlow :listNodes = "nodes"/>-->
+    <ParentNode/>
+    <div class="flow-func" v-if="isSelected"> 
     </div>
   </div>
 </template>
 <script setup>
   import FunctionFlow from '@/components/FunctionFlow.vue';
+  import ParentNode from '@/components/ParentNode.vue'
   import { ref } from 'vue'
 
   const nodes = ref(Object)
