@@ -14,7 +14,7 @@
                     <div v-if="CheckNextElement(index,item)" class="connect-line">
                         <button class="add-btn" @click="AddNewStep(index,false,item)">+</button>
                     </div>
-                    <!-- <div class="end-connect-line"></div> -->
+                    <!-- <div v-if="item.level===4 || item.level===5" class="end-connect-line"></div> -->
                 </div>
             </div>
         </div>
@@ -27,8 +27,14 @@
                     <h4>{{ item?.name }}</h4>
                     <div class="step-details-info">
                         <div class="step-details-input" v-for="subItem in item?.details" :key="subItem.detailsId">
-                            <label for="">{{ subItem?.detailsName }}</label>
-                            <input type="text" v-model="subItem.description">
+                            <div v-if="item.isTemplate">
+                                <label for="">{{ subItem?.detailsName }}</label>
+                                <input type="text" v-model="subItem.description">
+                            </div>
+                            <div v-else>
+                                <p>{{ subItem?.detailsName }}</p>
+                                <p>{{ subItem?.description }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -38,7 +44,7 @@
   </template>
   
   <script setup lang="ts">
-  import { nextTick, onMounted, ref, watchEffect } from 'vue'
+  import { ref, watchEffect } from 'vue'
   import {masterDatas,masterTemplateData, details, Step} from './data/data'
   
   const datas = ref<Step[]>([])
@@ -47,10 +53,67 @@
   const templateData = ref<Step[]>([])
   templateData.value = masterTemplateData.value
 
+  watchEffect(() => {
+    console.log(datas.value.length)
+    const newList  = ReRenderList(datas.value)
+    datas.value = newList
+    console.log(datas.value.length)
+  })
+
+
+function ReRenderList(items : Step[]) {
+  let result = [];
+
+  for(let i = 0 ; i < items.length; i ++)
+  {
+    result.push(items[i])
+
+    if( Math.abs(items[i]?.level - items[i+1]?.level) > 1)
+    {
+      if(items[i]?.level < items[i+1]?.level)
+      {
+        for(let j : number = items[i]?.level + 1; j < items[i+1]?.level; j++)
+        {
+          const newItem : Step = {
+            level: j,
+            id: 0,
+            name: 'Add Item',
+            category: '',
+            isTemplate: true,
+            details: [],
+            IsNullOrEmpty: function(val: String): boolean {
+              throw new Error('Function not implemented.')
+            }
+          }
+          result.push(newItem)
+        }
+      }
+      else{
+        for(let j : number = items[i]?.level - 1; j > items[i+1]?.level; j--)
+        {
+          const newItem : Step = {
+            level: j,
+            id: 0,
+            name: 'Add Item',
+            category: '',
+            isTemplate: true,
+            details: [],
+            IsNullOrEmpty: function(val: String): boolean {
+              throw new Error('Function not implemented.')
+            }
+          }
+          result.push(newItem)
+        }
+      }
+    }
+  }
+
+  return result;
+}
 
 function AddNewStep(index : any,isTop : boolean,item : Step){
     console.log(index,isTop,item)
-    let level :Number;
+    let level :number;
 
     level = isTop && datas.value[index-1].level < item.level ? datas.value[index-1].level :item.level;
 
@@ -169,7 +232,7 @@ function AddNewStep(index : any,isTop : boolean,item : Step){
         width: 100%;
         display: flex;
         flex-direction: row;
-        align-items: center;
+        /* align-items: center; */
         justify-content: center;
         padding: 2rem;
     }
@@ -198,6 +261,9 @@ function AddNewStep(index : any,isTop : boolean,item : Step){
     gap: 1rem;
     height: 100%;
     min-height: 500px;
+    position: sticky;
+    top: 116px;
+    right: 0;
 }
 
 .template-info, .step-info{
@@ -220,7 +286,7 @@ function AddNewStep(index : any,isTop : boolean,item : Step){
 }
 
 .step-details-input input {
-    border: 1px solid var(--border-color);
+    border: 1px solid #aaa;
     padding-left: 0.2rem;
 }
 
@@ -329,7 +395,7 @@ function AddNewStep(index : any,isTop : boolean,item : Step){
 .end-connect-line{
     width: 50px;
     height: 50px;
-    border: 1px solid var(--border-color);
+    border: 1px solid #aaa;
 }
 
 .delete-btn{

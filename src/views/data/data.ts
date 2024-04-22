@@ -1,13 +1,13 @@
 import { ref } from 'vue'
 
 export class Step{
-    id : Number;
-    name : String;
-    category : String;
-    isTemplate : Boolean;
+    id : number;
+    name : string;
+    category : string;
+    isTemplate : boolean;
     details : details[];
-    level : Number;
-    constructor(id: Number, name: String,category : String,isTemplate : Boolean,level : Number,details : details[]) {
+    level : number;
+    constructor(id: number, name: string,category : string,isTemplate : boolean,level : number,details : details[]) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -27,11 +27,11 @@ export class Step{
 }
 
 export class details {
-    detailsId : Number;
-    detailsName : String;
-    description : String
+    detailsId : number;
+    detailsName : string;
+    description : string
 
-    constructor(detailsId: Number, detailsName: String,description : String) {
+    constructor(detailsId: number, detailsName: string,description : string) {
         this.detailsId = detailsId;
         this.detailsName = detailsName;
         this.description = description;
@@ -179,6 +179,34 @@ new Step(3,'Item 3-1-1','cat3',true,5,
             }
         ]
     ),
+    new Step(4,'Item 4-1-1','cat4',true,3,
+        [
+            {
+                detailsId : 1,
+                detailsName : 'Details 1',
+                description : ''
+            },
+            {
+                detailsId : 2,
+                detailsName : 'Details 2',
+                description : ''
+            }
+        ]
+    ),
+    new Step(4,'Item 4','cat4',true,4,
+        [
+            {
+                detailsId : 1,
+                detailsName : 'Details 1',
+                description : ''
+            },
+            {
+                detailsId : 2,
+                detailsName : 'Details 2',
+                description : ''
+            }
+        ]
+    ),
     new Step(4,'Item 4-1','cat4',true,2,
         [
             {
@@ -252,7 +280,7 @@ new Step(3,'Item 3-1-1','cat3',true,5,
   ])
 
 export const masterTemplateData = ref([
-    new Step(1,'Item 1','cat1',true,1,
+    new Step(1,'Item 1','cat1',false,1,
             [
               {
                   detailsId : 1,
@@ -266,7 +294,7 @@ export const masterTemplateData = ref([
               }
            ]
         ),
-      new Step(2,'Item 2','cat2', true,1,
+      new Step(2,'Item 2','cat2', false,1,
             [
               {
                   detailsId : 1,
@@ -280,7 +308,7 @@ export const masterTemplateData = ref([
               }
            ]
         ),
-      new Step(3,'Item 3','cat3',true,1,
+      new Step(3,'Item 3','cat3',false,1,
             [
               {
                   detailsId : 1,

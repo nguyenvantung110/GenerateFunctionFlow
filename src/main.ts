@@ -8,7 +8,10 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import indent from './views/directives/indent'
+import { createPinia } from 'pinia';
+import { userStore } from "./stores/userStore";
 
+const pinia = createPinia()
 
 const vuetify = createVuetify({
   components,
@@ -17,5 +20,7 @@ const vuetify = createVuetify({
 
 createApp(App)
 .use(router)
+.use(pinia)
 .directive('indent',indent)
 .mount("#app");
+const useUserStore = userStore()
