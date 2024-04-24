@@ -11,18 +11,46 @@
     </div>
     <!-- <FunctionFlow :listNodes = "nodes"/>-->
     <ParentNode/>
-    <div class="flow-func" v-if="isSelected"> 
+    <div class="flow-func"> 
+      {{ arr }}
+      <button @click="ChangeValue()">Change</button>
     </div>
   </div>
+
 </template>
-<script setup>
+<script setup lang="ts">
   import FunctionFlow from '@/components/FunctionFlow.vue';
   import ParentNode from '@/components/ParentNode.vue'
-  import { ref } from 'vue'
+  import { ref, toRefs, watch, watchEffect } from 'vue'
 
   const nodes = ref(Object)
   const templates = ref()
   const isSelected = ref(false)
+  const arr = ref('')
+let a = 0
+const myReactiveArray = ref([
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+]);
+
+  function ChangeValue(){
+    //arr.value = arr.value.splice(1,0)
+    a= a + 1
+    templates.value[0].name = 'tungnv' + a
+    myReactiveArray.value[0].name = 'tungnv' + a;
+  }
+
+
+
+watchEffect(() => {
+  const refsArray = toRefs(myReactiveArray.value);
+  console.log('Tên của Alice:',refsArray[0].name);
+});
+
+  watch(arr, (newValue, oldValue) => {
+  console.log('Giá trị mới:', newValue);
+},{deep : true});
+
   templates.value = [
     {
       id : '1',

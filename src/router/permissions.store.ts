@@ -6,12 +6,21 @@ import { AuthorPath } from './authorpath';
 
 export const usePermissionsStore = defineStore('permissions', {
   state: () => ({
-    role: '' as Role,
+    role: '' as string,
     permissions: {} as Permissions,
     authorPaths : [] as AuthorPath[]
   }),
+  persist: {
+    enabled: true,
+    strategies: [
+      { 
+        key: 'permissions',
+        storage: sessionStorage
+      }
+    ]
+},
   actions: {
-    setRole(role: Role) {
+    setRole(role: string) {
       this.role = role;
       this.updatePermissions();
     },

@@ -6,6 +6,15 @@ import { defineStore } from 'pinia'
 // the first argument is a unique id of the store across your application
 export const userStore = defineStore('userStore', {
     state: () => ({ isLoggedIn: false, user: null }),
+    persist: {
+        enabled: true,
+        strategies: [
+          { 
+            key: 'userStore',
+            storage: sessionStorage
+          }
+        ]
+    },
     actions: {
         login(userData : any) {
           // Gọi API đăng nhập và lưu trữ thông tin người dùng

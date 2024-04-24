@@ -5,24 +5,19 @@ export class Step{
     name : string;
     category : string;
     isTemplate : boolean;
+    isRenderItem : boolean;
+    isIfStep :boolean;
     details : details[];
     level : number;
-    constructor(id: number, name: string,category : string,isTemplate : boolean,level : number,details : details[]) {
+    constructor(id: number, name: string,category : string,isTemplate : boolean,isRenderItem : boolean,isIfStep :boolean,level : number,details : details[]) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.isTemplate = isTemplate;
+        this.isRenderItem = isRenderItem;
+        this.isIfStep = isIfStep;
         this.details = details;
         this.level = level;
-    }
-
-    IsNullOrEmpty(val : String){
-        const data = val.trim();
-        if(data === null || data === undefined || data === ''){
-            return false;
-        }
-
-        return true;
     }
 }
 
@@ -39,7 +34,66 @@ export class details {
 }
 
 export const masterDatas = ref<Step[]>([
-    new Step( 1,'Item 1','cat1',true,1,
+    new Step( 1,'Item 1','cat1',true,false,false,1,
+        [
+            {
+                detailsId : 1,
+                detailsName : 'Details 1',
+                description : ''
+            },
+            {
+                detailsId : 2,
+                detailsName : 'Details 2',
+                description : ''
+            }
+        ]
+     )
+//,
+//     new Step(2,'Item 2','cat2',true,false,true,2,
+//         [
+//             {
+//                 detailsId : 1,
+//                 detailsName : 'Details 1',
+//                 description : ''
+//             },
+//             {
+//                 detailsId : 2,
+//                 detailsName : 'Details 2',
+//                 description : ''
+//             }
+//         ]
+//     ),
+//     new Step(2,'Item 2-2','cat2',true,false,true,2,
+//     [
+//         {
+//             detailsId : 1,
+//             detailsName : 'Details 1',
+//             description : ''
+//         },
+//         {
+//             detailsId : 2,
+//             detailsName : 'Details 2',
+//             description : ''
+//         }
+//     ]
+// )
+// ,
+//     new Step(2,'Item 2-3','cat2',true,false,true,3,
+//     [
+//         {
+//             detailsId : 1,
+//             detailsName : 'Details 1',
+//             description : ''
+//         },
+//         {
+//             detailsId : 2,
+//             detailsName : 'Details 2',
+//             description : ''
+//         }
+//     ]
+// )
+,
+    new Step(5,'Item 4','cat5',true,false,false,1,
         [
             {
                 detailsId : 1,
@@ -53,217 +107,7 @@ export const masterDatas = ref<Step[]>([
             }
         ]
     ),
-    new Step( 1,'Item 1-1','cat1',true,1,
-        [
-            {
-                detailsId : 1,
-                detailsName : 'Details 1',
-                description : ''
-            },
-            {
-                detailsId : 2,
-                detailsName : 'Details 2',
-                description : ''
-            }
-        ]
-    ),
-    new Step( 1,'Item 1-2','cat1',true,1,
-        [
-            {
-                detailsId : 1,
-                detailsName : 'Details 1',
-                description : ''
-            },
-            {
-                detailsId : 2,
-                detailsName : 'Details 2',
-                description : ''
-            }
-        ]
-    ),
-    new Step(2,'Item 2','cat2',true,2,
-        [
-            {
-                detailsId : 1,
-                detailsName : 'Details 1',
-                description : ''
-            },
-            {
-                detailsId : 2,
-                detailsName : 'Details 2',
-                description : ''
-            }
-        ]
-    ),
-    new Step(2,'Item 2-2','cat2',true,2,
-    [
-        {
-            detailsId : 1,
-            detailsName : 'Details 1',
-            description : ''
-        },
-        {
-            detailsId : 2,
-            detailsName : 'Details 2',
-            description : ''
-        }
-    ]
-),
-    new Step(3,'Item 3','cat3',true,3,
-        [
-            {
-                detailsId : 1,
-                detailsName : 'Details 1',
-                description : ''
-            },
-            {
-                detailsId : 2,
-                detailsName : 'Details 2',
-                description : ''
-            }
-        ]
-    ),
-    new Step(3,'Item 3-1','cat3',true,3,
-        [
-            {
-                detailsId : 1,
-                detailsName : 'Details 1',
-                description : ''
-            },
-            {
-                detailsId : 2,
-                detailsName : 'Details 2',
-                description : ''
-            }
-        ]
-    ),
-    new Step(3,'Item 3-1-1','cat3',true,4,
-    [
-        {
-            detailsId : 1,
-            detailsName : 'Details 1',
-            description : ''
-        },
-        {
-            detailsId : 2,
-            detailsName : 'Details 2',
-            description : ''
-        }
-    ]
-),
-new Step(3,'Item 3-1-1','cat3',true,5,
-    [
-        {
-            detailsId : 1,
-            detailsName : 'Details 1',
-            description : ''
-        },
-        {
-            detailsId : 2,
-            detailsName : 'Details 2',
-            description : ''
-        }
-    ]
-),
-    new Step(4,'Item 4','cat4',true,2,
-        [
-            {
-                detailsId : 1,
-                detailsName : 'Details 1',
-                description : ''
-            },
-            {
-                detailsId : 2,
-                detailsName : 'Details 2',
-                description : ''
-            }
-        ]
-    ),
-    new Step(4,'Item 4-1-1','cat4',true,3,
-        [
-            {
-                detailsId : 1,
-                detailsName : 'Details 1',
-                description : ''
-            },
-            {
-                detailsId : 2,
-                detailsName : 'Details 2',
-                description : ''
-            }
-        ]
-    ),
-    new Step(4,'Item 4','cat4',true,4,
-        [
-            {
-                detailsId : 1,
-                detailsName : 'Details 1',
-                description : ''
-            },
-            {
-                detailsId : 2,
-                detailsName : 'Details 2',
-                description : ''
-            }
-        ]
-    ),
-    new Step(4,'Item 4-1','cat4',true,2,
-        [
-            {
-                detailsId : 1,
-                detailsName : 'Details 1',
-                description : ''
-            },
-            {
-                detailsId : 2,
-                detailsName : 'Details 2',
-                description : ''
-            }
-        ]
-    ),
-    new Step(5,'Item 5','cat5',true,1,
-        [
-            {
-                detailsId : 1,
-                detailsName : 'Details 1',
-                description : ''
-            },
-            {
-                detailsId : 2,
-                detailsName : 'Details 2',
-                description : ''
-            }
-        ]
-    ),
-    new Step(5,'Item 5-1','cat5',true,2,
-        [
-            {
-                detailsId : 1,
-                detailsName : 'Details 1',
-                description : ''
-            },
-            {
-                detailsId : 2,
-                detailsName : 'Details 2',
-                description : ''
-            }
-        ]
-    ),
-    new Step(5,'Item 5-2','cat5',true,2,
-        [
-            {
-                detailsId : 1,
-                detailsName : 'Details 1',
-                description : ''
-            },
-            {
-                detailsId : 2,
-                detailsName : 'Details 2',
-                description : ''
-            }
-        ]
-    ),
-    new Step(5,'Item 6','cat5',true,1,
+    new Step(5,'Item 5','cat5',true,false,false,1,
         [
             {
                 detailsId : 1,
@@ -280,7 +124,7 @@ new Step(3,'Item 3-1-1','cat3',true,5,
   ])
 
 export const masterTemplateData = ref([
-    new Step(1,'Item 1','cat1',false,1,
+    new Step(1,'THEN : Add an action','cat1',false,false,false,1,
             [
               {
                   detailsId : 1,
@@ -294,7 +138,7 @@ export const masterTemplateData = ref([
               }
            ]
         ),
-      new Step(2,'Item 2','cat2', false,1,
+      new Step(2,'IF:Add a condition','cat2', false,false,true,1,
             [
               {
                   detailsId : 1,
@@ -308,7 +152,7 @@ export const masterTemplateData = ref([
               }
            ]
         ),
-      new Step(3,'Item 3','cat3',false,1,
+      new Step(3,'IF or ELSE : Add conition options','cat3',false,false,false,1,
             [
               {
                   detailsId : 1,

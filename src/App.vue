@@ -4,6 +4,7 @@
 </template>
 <script setup lang="ts">
 import NavBar from './components/nav.vue'
+import Spinner from './components/spinner.vue'
 </script>
 <style>
 #app {

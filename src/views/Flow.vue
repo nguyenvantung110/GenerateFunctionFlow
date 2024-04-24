@@ -2,38 +2,40 @@
     <div class="funtion-flow">
         <div class="main-flow">
             <div class="step-flow">
-                <div class="data-list" :class="{ 'sub-step' : item?.isSubBranch}" v-for="(item, index) in datas" :key="item.id" v-indent="item.level">
-                    <div v-if="item.level !== 1 || IsParentNodeAfterBranch(index,item)" 
+                <div class="data-list" v-for="(item, index) in datas" :key="item.id" v-indent="item.level">
+                    <div v-if="(item.level !== 1 || IsParentNodeAfterBranch(index,item)) && !item.isRenderItem"
                          :class="[{'connect-line' : item.level < 2 || IsSecondNodeOfBranch(index,item)},{'branch-connect-line' : IsFirstNodeOfBranch(index,item)}]">
                         <button class="add-btn" @click="AddNewStep(index,true,item)">+</button>
                     </div>
-                    <button class="step-btn" :class="{'new-step' : !item.isTemplate}" @click="showDetails(item)" @focus="handleFocus($event)" @blur="handleBlur()">
+                    <button v-if="!item.isRenderItem" class="step-btn" :class="{'new-step' : !item.isTemplate}" @click="showDetails(index,item)" @focus="handleFocus($event)" @blur="handleBlur()">
                         {{ item?.name }} ---- {{ item.level }}
                         <button v-if="!item.isTemplate" class="delete-btn" @click="deleteItem(index)">x</button>
                     </button>
                     <div v-if="CheckNextElement(index,item)" class="connect-line">
                         <button class="add-btn" @click="AddNewStep(index,false,item)">+</button>
                     </div>
-                    <!-- <div v-if="item.level===4 || item.level===5" class="end-connect-line"></div> -->
                 </div>
             </div>
         </div>
         <div class="step-details">
             <div class="template-info">
-                This is template infomation   
+                This is template infomation
             </div>
             <div class="step-info" v-if="selectedStep">
-                <div class="template-list" v-for="item in selectedStep" :key="item.id">
+                <p v-if="!selectedStep[0].isTemplate">Add a component</p>
+                <div class="template-list" :class="{'details-new-item':!item.isTemplate}" v-for="item in selectedStep" :key="item.id">
                     <h4>{{ item?.name }}</h4>
                     <div class="step-details-info">
-                        <div class="step-details-input" v-for="subItem in item?.details" :key="subItem.detailsId">
-                            <div v-if="item.isTemplate">
+                        <div v-for="subItem in item?.details" :key="subItem.detailsId">
+                            <div class="step-details-input" v-if="item.isTemplate">
                                 <label for="">{{ subItem?.detailsName }}</label>
                                 <input type="text" v-model="subItem.description">
                             </div>
                             <div v-else>
-                                <p>{{ subItem?.detailsName }}</p>
-                                <p>{{ subItem?.description }}</p>
+                                <button @click="AssignItem(index,item)">
+                                    <span>{{ subItem?.detailsName }}</span>
+                                    <span>{{ subItem?.description }}</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -42,28 +44,20 @@
         </div>
     </div>
   </template>
-  
+
   <script setup lang="ts">
-  import { ref, watchEffect } from 'vue'
+  import { ref } from 'vue'
   import {masterDatas,masterTemplateData, details, Step} from './data/data'
-  
+
   const datas = ref<Step[]>([])
   datas.value = masterDatas.value
 
   const templateData = ref<Step[]>([])
   templateData.value = masterTemplateData.value
 
-  watchEffect(() => {
-    console.log(datas.value.length)
-    const newList  = ReRenderList(datas.value)
-    datas.value = newList
-    console.log(datas.value.length)
-  })
-
-
 function ReRenderList(items : Step[]) {
   let result = [];
-
+  items = items.filter(x => x.isRenderItem === false)
   for(let i = 0 ; i < items.length; i ++)
   {
     result.push(items[i])
@@ -80,10 +74,9 @@ function ReRenderList(items : Step[]) {
             name: 'Add Item',
             category: '',
             isTemplate: true,
+            isRenderItem: true,
             details: [],
-            IsNullOrEmpty: function(val: String): boolean {
-              throw new Error('Function not implemented.')
-            }
+            isIfStep: false
           }
           result.push(newItem)
         }
@@ -97,10 +90,9 @@ function ReRenderList(items : Step[]) {
             name: 'Add Item',
             category: '',
             isTemplate: true,
+            isRenderItem: true,
             details: [],
-            IsNullOrEmpty: function(val: String): boolean {
-              throw new Error('Function not implemented.')
-            }
+            isIfStep: false
           }
           result.push(newItem)
         }
@@ -108,16 +100,16 @@ function ReRenderList(items : Step[]) {
     }
   }
 
-  return result;
+  datas.value = result
 }
 
 function AddNewStep(index : any,isTop : boolean,item : Step){
-    console.log(index,isTop,item)
+    console.log(isTop,item.name)
     let level :number;
 
     level = isTop && datas.value[index-1].level < item.level ? datas.value[index-1].level :item.level;
 
-    const newItem = new Step(index + 1,`___New Item ${index + 2}`,'cat3',false,level,
+    const newItem = new Step(index + 1,`___New Item ${index + 2}`,'cat3',false,false,false,level,
         [
             {
                 detailsId : 1,
@@ -131,7 +123,7 @@ function AddNewStep(index : any,isTop : boolean,item : Step){
             }
         ]
     )
-    
+
     if(isTop)
     {
         datas.value.splice(index,0,newItem)
@@ -139,18 +131,35 @@ function AddNewStep(index : any,isTop : boolean,item : Step){
     else{
         datas.value.splice(index + 1,0,newItem)
     }
+
+    // ReRenderList(datas.value)
   }
 
   function deleteItem(index : any){
     const res = confirm('Are you sure you want to delete this step?')
     if(res)
     {
+        // datas.value.splice(index ,1)
+        for(let i = index + 1;i< datas.value.length; i++){
+            if(datas.value[i].level <= datas.value[index].level){
+                break
+            }
+
+            datas.value[i].level = datas.value[i].level -1
+        }
         datas.value.splice(index ,1)
+        ReRenderList(datas.value)
     }
+
+    console.log('after delete',datas.value)
   }
 
   const selectedStep = ref<Step[]>()
-  function showDetails(val : Step){
+  const activeStep = ref(-1)
+
+  function showDetails(index:number,val : Step){
+    activeStep.value = index
+
     if(val.isTemplate)
     {
         selectedStep.value = []
@@ -189,7 +198,7 @@ function AddNewStep(index : any,isTop : boolean,item : Step){
         {
             isSecondParentNode = true;
         }
-        
+
         isFirstParentNode = IsFirstNodeOfBranch(i,datas.value[i])
     }
 
@@ -202,6 +211,22 @@ function AddNewStep(index : any,isTop : boolean,item : Step){
     return index > 0 && item.level < datas.value[index-1].level
   }
 
+  function AssignItem(index: number, item: Step)
+  {
+    const currentLevel = ref(datas.value[activeStep.value].level)
+    let isIfStep = datas.value[activeStep.value].isIfStep
+
+    if(item.isIfStep && isIfStep === false){
+        currentLevel.value = currentLevel.value + 1
+        isIfStep = true
+    }
+
+    const newItem = new Step(item.id,item.name,item.category,false,false,isIfStep,currentLevel.value,item.details)
+
+    datas.value[activeStep.value] = newItem
+
+    ReRenderList(datas.value)
+  }
 
   // Add css animation when focus and blur
   let eventObj : any;
@@ -221,7 +246,7 @@ function AddNewStep(index : any,isTop : boolean,item : Step){
     eventObj.target.style.animation = 'identifier 3s infinite'
   }
   </script>
-  
+
 <style>
     :root {
         --border-color : var(--border-color);
@@ -267,10 +292,16 @@ function AddNewStep(index : any,isTop : boolean,item : Step){
 }
 
 .template-info, .step-info{
-    border: 1px solid var(--border-color);
+    border: 1px solid #aaa;
     border-radius: 10px;
     padding: 1rem;
     text-align: left;
+}
+
+.step-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .step-details-info {
@@ -282,7 +313,7 @@ function AddNewStep(index : any,isTop : boolean,item : Step){
 .step-details-input{
     display: flex;
     flex-direction: row;
-    gap: 0.5rem;
+    gap: 1rem;
 }
 
 .step-details-input input {
@@ -296,6 +327,19 @@ function AddNewStep(index : any,isTop : boolean,item : Step){
 
 .data-list{
     width: 300px;
+}
+
+.details-new-item{
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+}
+
+.details-new-item:hover{
+    background: #f5f5f5
+}
+
+.details-new-item .step-details-info{
+    gap: 0;
 }
 
 .step-btn {
